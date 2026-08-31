@@ -1124,9 +1124,7 @@ pub mod engine {
     // ============================================================================
     // 4. NETWORK GATEWAY (96-Byte Quantitative Protocol Frame Dispatcher)
     // ============================================================================
-    // ============================================================================
-    // 4. NETWORK GATEWAY (96-Byte Quantitative Protocol Frame Dispatcher)
-    // ============================================================================
+
     pub mod network {
         use super::engine::compute_metrics_query;
         use super::protocol::{
@@ -1196,7 +1194,7 @@ pub mod engine {
                     break;
                 }
 
-                // 1. HTTP/SVG MULTIPLEXER HOOK
+                
                 if first_byte[0] == b'G' {
                     let mut rest = [0u8; 3];
                     if stream.read_exact(&mut rest).is_ok() && &rest == b"ET " {
@@ -1217,7 +1215,7 @@ pub mod engine {
                             let metrics = compute_metrics_query(&storage, &symbol, 0)
                                 .unwrap_or_else(|_| QueryMetrics::empty());
 
-                            // 1. Dynamically scale the 50 historical points across the volatility corridor
+                         
                             let range =
                                 (metrics.upper_bollinger - metrics.lower_bollinger).max(0.001);
                             let step =
@@ -1228,7 +1226,7 @@ pub mod engine {
                                 .enumerate()
                                 .map(|(i, &p)| {
                                     let x = 150.0 + (i as f64 * step);
-                                    // Clamps Y inside the 100px vertical corridor (y: 250 to 350)
+                                    
                                     let y = 350.0
                                         - (((p - metrics.lower_bollinger) / range).clamp(0.0, 1.0)
                                             * 100.0);
@@ -1257,7 +1255,7 @@ pub mod engine {
                                 300.0
                             };
 
-                            // 2. Render dynamic Bloomberg template
+                            
                             let svg = format!(
                                 r##"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" style="background-color:#000000; font-family:'Courier New', monospace;">
                                                             <rect width="100%" height="100%" fill="#000000"/>
@@ -1317,7 +1315,7 @@ pub mod engine {
                     break;
                 }
 
-                // 2. BINARY INGESTION & QUERY PROTOCOL
+               
                 if first_byte[0] != PROTOCOL_VERSION {
                     let _ = stream.write_all(&[0xFF]);
                     break;
@@ -1566,9 +1564,7 @@ pub mod engine {
     // 6. TERMINAL VISUALIZER (TrueColor Modern ANSI Dashboard)
     // ============================================================================
 
-    // ============================================================================
-    // 6. TERMINAL VISUALIZER (TrueColor Modern ANSI Dashboard)
-    // ============================================================================
+  
     pub mod client_tui {
         use super::protocol::{
             METRICS_SIZE, PROTOCOL_VERSION, QueryMetrics, sanitize_symbol, symbol_to_string,
@@ -1766,7 +1762,7 @@ pub mod engine {
                 }
             });
 
-            // Universal clear screen and hide cursor (NO Alternate Screen Buffer)
+           
             print!("\x1B[2J\x1B[?25l");
             stdout.flush()?;
 
@@ -1904,7 +1900,7 @@ pub mod engine {
                     }
 
                     let mut frame = String::with_capacity(4096);
-                    // Anchor frame to the top-left corner every cycle to prevent scrolling
+                  
                     frame.push_str("\x1B[H");
 
                     let held_input = if last_cmd_time.elapsed() < Duration::from_millis(2500) {
@@ -1935,7 +1931,7 @@ pub mod engine {
                 Ok(())
             })();
 
-            // Clear screen and restore cursor on exit
+            
             print!("\x1B[2J\x1B[H\x1B[?25h");
             stdout.flush()?;
             res
@@ -2127,7 +2123,7 @@ pub mod engine {
             );
             push_divider(frame, '├', '─', '┤');
 
-            // Price Bar Chart
+          
             let (min, max) = history
                 .iter()
                 .fold((f64::INFINITY, f64::NEG_INFINITY), |(mn, mx), &v| {
@@ -2220,7 +2216,7 @@ pub mod engine {
 
             push_divider(frame, '├', '─', '┤');
 
-            // Limit status string length to avoid wrapping
+           
             let short_status = if status.len() > 18 {
                 &status[..18]
             } else {
