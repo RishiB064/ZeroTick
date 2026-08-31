@@ -45,6 +45,18 @@ This is exercised automatically: `cargo run -- chaos` writes 1,000,000 real tick
 
 ---
 
+## The multiplexer: one port, two protocols
+
+The engine multiplexes both high-frequency raw TCP binary ingest and standard HTTP GET requests through a single unified port, using nothing but native `std::net::TcpListener` and `std::net::TcpStream`.
+
+**Zero-dependency HTTP parsing.** Incoming web requests are routed and their headers parsed with hand-rolled string formatting and binary parsing — no `axum`, no `serde`, no external framework or serialization crate anywhere in the path.
+
+**Native SVG generation.** Rather than shipping JavaScript or an external frontend charting library to the browser, the multiplexer translates raw time-series data directly into raw SVG XML strings on the backend and serves them instantly.
+
+**Non-blocking concurrency.** Incoming connections are dispatched onto native `std::thread` pools, coordinated with `std::sync::Arc` and `std::sync::Mutex` primitives, so serving visual HTTP dashboards never stalls the low-latency data ingestion pipeline.
+
+---
+
 ## Single-pass quant engine
 
 Every metric — count, OHLC, mean, variance, std-dev, z-score, Bollinger bands, max drawdown — comes from one accumulator that touches each tick exactly once and holds only a fixed handful of running scalars (72 bytes), no matter whether it's seen 10 ticks or 10 million:
@@ -97,6 +109,11 @@ cargo run -- tui     [symbol] [host] [port]                          # live dash
 cargo run -- chaos   [data_dir]                                      # torn-write recovery proof
 cargo run -- bench                                                   # quant engine throughput
 ```
+
+Once `serve` is running, the HTTP multiplexer exposes per-symbol queries at `http://127.0.0.1:8080/<SYMBOL>` — e.g. `http://127.0.0.1:8080/AAPL`. Each request returns a JSON payload combining:
+
+- **Live quant stats** for the symbol — count, OHLC, mean, variance, std-dev, z-score, Bollinger bands, and max drawdown, straight from the single-pass accumulator.
+- **Recent raw ticks** for the symbol, decoded from the underlying Gorilla-compressed storage.
 
 ## Current scope
 

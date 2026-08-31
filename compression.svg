@@ -4,6 +4,8 @@
       <path d="M0,0 L8,4 L0,8 Z" fill="black"/>
     </marker>
   </defs>
+  <rect x="0" y="0" width="760" height="280" fill="white"/>
+
 
   <rect x="10" y="10" width="740" height="50" fill="white" stroke="black"/>
   <text x="380" y="30" text-anchor="middle" font-weight="bold">Raw tick stream (16 bytes each)</text>
