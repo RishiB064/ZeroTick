@@ -1,0 +1,64 @@
+[Screen: Title card "ZeroTick" over architecture.svg diagram, then split screen showing an empty Cargo.toml alongside engine.rs (or your root source file)]
+
+"Every modern time-series database runs on thousands of lines across dozens of external crates. This weekend, we built one from absolute scratch with zero third-party dependencies.
+
+This is ZeroTick: high-throughput TCP ingestion, Gorilla-style real-time compression, crash recovery, and a live ANSI dashboard—contained entirely in pure Rust using only the standard library and POSIX primitives. No Tokio, no Serde, no crates.io. Empty Cargo.toml."
+
+0:30 – 1:30 | Live Ingestion & ANSI Terminal UI
+[Screen: Split terminal into 3 panes. Run commands sequentially.]
+
+"Let’s see it run live across three terminals.
+
+In Terminal 1, we start the server on port 8080 with an append-only storage directory. It binds directly to native POSIX sockets without an async runtime.
+cargo run --release -- serve 8080 ./data
+
+In Terminal 2, we fire up the load generator, streaming 250,000 synthetic market ticks per second over raw TCP.
+cargo run --release -- ingest ALL 127.0.0.1 8080 250000 0
+
+In Terminal 3, we launch the live terminal dashboard.
+cargo run --release -- tui AAPL 127.0.0.1 8080
+
+There is no Ratatui or Crossterm here. This TrueColor interface is rendered by flushing raw ANSI escape sequences directly to standard output. Because it runs independently off disk offsets, it costs zero CPU cycles on the critical ingestion path."
+
+1:30 – 2:35 | Gorilla Compression & Chaos Engine
+[Screen: Switch to Terminal running the chaos harness; show the terminal stats output.]
+
+"Raw tick storage costs 16 bytes per tick. We pack ticks into frames of 1,000 and compress them in real time using a Gorilla-style scheme: timestamps via delta-of-delta bit packing, and prices by XOR-ing IEEE-754 bit patterns against the previous price.
+
+Let's run our chaos harness over 1,000,000 synthetic ticks.
+cargo run --release -- chaos ./data
+
+Here are the measured results: our compressed stream slashes storage dramatically against the 16MB raw baseline, all calculated on the fly."
+
+2:35 – 3:30 | Crash Safety & Lock-Free Reads
+[Screen: Highlight chaos output showing torn-write simulation and successful recovery log.]
+
+"Databases crash mid-write. To test this, our chaos harness deliberately injects 11 garbage bytes to simulate a torn write midway through a frame, then triggers recovery.
+
+Because every disk frame begins with a self-describing header, the recovery parser locates the exact boundary of valid data and truncates the corrupt tail cleanly.
+
+For reading, an in-memory frame index paired with POSIX pread (read_at) allows queries to read absolute disk offsets lock-free. Readers never block active TCP writers."
+
+3:30 – 4:30 | The Multiplexer & Live SVG Bollinger Engine
+[Screen: Side-by-side: Terminal 2 still ingesting 250k ticks/sec; open browser to [http://127.0.0.1:8080/AAPL](http://127.0.0.1:8080/AAPL).]
+
+"On top of storage sits our streaming statistics engine. It tracks moving metrics with a fixed 72-byte state using Welford’s algorithm for single-pass variance.
+
+Rather than adding a web framework, we built a protocol multiplexer that sniffs the first 4 bytes of every incoming socket. If it sees raw ticks, it routes to ingestion. If it sees GET , it routes to HTTP.
+
+While pushing a quarter-million ticks a second, I can open a browser to localhost:8080/AAPL.
+
+That dynamic Bollinger Band chart is raw SVG generated in memory. The engine parses the HTTP GET, runs the math, builds the SVG XML string, and flushes it straight down the socket. No Axum, no Nginx."
+
+4:30 – 5:00 | Standard Library Replacements & Outro
+[Screen: Quick flash of STDLIB.md diff table, ending on GitHub repo URL.]
+
+"Every crate had to be replaced by the Rust standard library:
+
+crossbeam-channel became std::sync::mpsc::sync_channel
+
+itoa became core::fmt::NumBuffer
+
+Async runtimes became native thread pools and non-blocking POSIX calls.
+
+ZeroTick: raw ingestion, Gorilla compression, torn-write recovery, and zero external dependencies. Every dependency is a supply-chain risk. We invited none. Thank you."
