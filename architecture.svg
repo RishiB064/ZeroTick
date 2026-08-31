@@ -1,0 +1,35 @@
+<svg viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="13">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="black"/>
+    </marker>
+  </defs>
+
+  <rect x="10" y="70" width="120" height="60" fill="white" stroke="black"/>
+  <text x="70" y="95" text-anchor="middle">Ingest</text>
+  <text x="70" y="112" text-anchor="middle">Client</text>
+
+  <line x1="130" y1="100" x2="175" y2="100" stroke="black" marker-end="url(#arrow)"/>
+  <text x="152" y="90" text-anchor="middle" font-size="10">TCP</text>
+
+  <rect x="180" y="70" width="120" height="60" fill="white" stroke="black"/>
+  <text x="240" y="95" text-anchor="middle">Network</text>
+  <text x="240" y="112" text-anchor="middle">Gateway</text>
+
+  <line x1="300" y1="100" x2="345" y2="100" stroke="black" marker-end="url(#arrow)"/>
+  <text x="322" y="90" text-anchor="middle" font-size="10">channel</text>
+
+  <rect x="350" y="70" width="120" height="60" fill="white" stroke="black"/>
+  <text x="410" y="95" text-anchor="middle">Storage</text>
+  <text x="410" y="112" text-anchor="middle">Worker</text>
+
+  <line x1="470" y1="100" x2="515" y2="100" stroke="black" marker-end="url(#arrow)"/>
+
+  <rect x="520" y="70" width="120" height="60" fill="white" stroke="black"/>
+  <text x="580" y="95" text-anchor="middle">.gts files</text>
+  <text x="580" y="112" text-anchor="middle">(Gorilla)</text>
+
+  <line x1="410" y1="130" x2="410" y2="160" stroke="black" marker-end="url(#arrow)"/>
+  <rect x="140" y="160" width="540" height="32" fill="white" stroke="black"/>
+  <text x="410" y="181" text-anchor="middle" font-size="12">Quant Engine → 96-byte metrics → TUI</text>
+</svg>

@@ -1,0 +1,33 @@
+<svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="12">
+  <defs>
+    <marker id="arrow-c" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="black"/>
+    </marker>
+  </defs>
+
+  <rect x="10" y="10" width="740" height="50" fill="white" stroke="black"/>
+  <text x="380" y="30" text-anchor="middle" font-weight="bold">Raw tick stream (16 bytes each)</text>
+  <text x="380" y="48" text-anchor="middle">[u64 timestamp][f64 price] · [u64 timestamp][f64 price] · ...</text>
+
+  <line x1="380" y1="60" x2="380" y2="85" stroke="black" marker-end="url(#arrow-c)"/>
+
+  <rect x="10" y="90" width="360" height="110" fill="white" stroke="black"/>
+  <text x="190" y="110" text-anchor="middle" font-weight="bold">Timestamp: delta-of-delta</text>
+  <text x="190" y="130" text-anchor="middle">1 bit  — gap unchanged</text>
+  <text x="190" y="147" text-anchor="middle">9 bits — gap shifted by ≤64</text>
+  <text x="190" y="164" text-anchor="middle">12 / 16 bits — larger shift</text>
+  <text x="190" y="181" text-anchor="middle">36 / 101 bits — rare big jump</text>
+
+  <rect x="390" y="90" width="360" height="110" fill="white" stroke="black"/>
+  <text x="570" y="110" text-anchor="middle" font-weight="bold">Price: XOR of bit patterns</text>
+  <text x="570" y="130" text-anchor="middle">1 bit — price unchanged</text>
+  <text x="570" y="147" text-anchor="middle">reuse previous leading/trailing</text>
+  <text x="570" y="164" text-anchor="middle">zero window when it still fits</text>
+  <text x="570" y="181" text-anchor="middle">else: encode a new window</text>
+
+  <line x1="380" y1="200" x2="380" y2="225" stroke="black" marker-end="url(#arrow-c)"/>
+
+  <rect x="10" y="230" width="740" height="45" fill="white" stroke="black"/>
+  <text x="380" y="248" text-anchor="middle" font-weight="bold">One compressed frame (≤1000 ticks)</text>
+  <text x="380" y="265" text-anchor="middle">[24B header: start_ts, end_ts, count, comp_len][bit-packed payload]</text>
+</svg>
