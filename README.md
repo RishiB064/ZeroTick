@@ -110,7 +110,9 @@ cargo run -- chaos   [data_dir]                                      # torn-writ
 cargo run -- bench                                                   # quant engine throughput
 ```
 
-Once `serve` is running, the HTTP multiplexer exposes per-symbol queries at `http://127.0.0.1:8080/<SYMBOL>` — e.g. `http://127.0.0.1:8080/AAPL`. Each request returns a JSON payload combining:
+Once `serve` is running, the HTTP multiplexer exposes per-symbol queries at `http://127.0.0.1:8080/<SYMBOL>` — e.g. `http://127.0.0.1:8080/AAPL`. 
+NOTE: YOU CAN SWITCH BETWEEN TICKERS BY CHANGING THE AAPL TO MSFT,NVDA,TSLA,GOGL or BTC, THIS WAS MADE TO SHOWCASE JUST ONE TICKER DUE TO THE 5-MIN DEMO VIDEO RESTRICTIONS.
+Each request returns a JSON payload combining:
 
 - **Live quant stats** for the symbol — count, OHLC, mean, variance, std-dev, z-score, Bollinger bands, and max drawdown, straight from the single-pass accumulator.
 - **Recent raw ticks** for the symbol, decoded from the underlying Gorilla-compressed storage.
